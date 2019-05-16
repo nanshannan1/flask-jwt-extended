@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="test1">
+    <button type="button" onclick="getToken()">测试</button><br />
+    <button type="button" onclick="getData()">获取</button>
+</div>
+<div id="test2">
+</div>
+<script src="../static/jquery-2.1.1.min.js"></script>
+<script>
+    var access_token;
+    var refresh_token;
+    function getToken() {
+        $.ajax({
+            url:"/login",
+            dataType:"json",
+            type:"post",
+            data:{
+                'username':'test',
+                'password':'test',
+            },
+            success:function(result){
+                access_token = result.data.access_token;
+                refresh_token = result.data.refresh_token;
+                var p1 = '<p>' + access_token + '</p>';
+                console.log(p1);
+                $('#test2').html(p1);
+            }
+        })
+    }
+
+    function getData() {
+        $.ajax({
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            url:"/protected",
+            dataType:"json",
+            type:"get",
+            success:function(result){
+                if(result.code != '0'){
+                    alert(result.code);
+                }
+                else{
+                    var p1 = '<p>' + result.secret_message + "  " + result.time + '</p>';
+                    console.log(p1);
+                    $('#test2').html(p1);
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>
